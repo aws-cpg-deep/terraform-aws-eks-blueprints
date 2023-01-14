@@ -174,6 +174,20 @@ module "eks_blueprints_kubernetes_addons" {
   karpenter_helm_config = {
     repository_username = data.aws_ecrpublic_authorization_token.token.user_name
     repository_password = data.aws_ecrpublic_authorization_token.token.password
+    set = [
+      {
+        name  = "nodeSelector.eks\\.amazonaws\\.com/compute-type"
+        value = "fargate"
+      },
+      {
+        name  = "controller.resources.requests.memory"
+        value = "1792M" # 2G allocated - 256Mb overhead
+      },
+      {
+        name  = "controller.resources.limits.memory"
+        value = "1792M" # 2G allocated - 256Mb overhead
+      }
+    ]
   }
   karpenter_node_iam_instance_profile        = module.karpenter.instance_profile_name
   karpenter_enable_spot_termination_handling = true
